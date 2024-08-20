@@ -3,6 +3,7 @@ require("dotenv").config({ path: "./.env" })
 const mongoose = require("mongoose")
 const cors = require("cors")
 const cookieParser = require("cookie-parser");
+const path = require("path")
 
 
 mongoose.connect(process.env.MONGO_URL)
@@ -17,6 +18,7 @@ app.use(cors({
 }))
 
 app.use(express.json()) //body parser
+app.use(express.static("dist"))
 app.use(express.urlencoded({ extended: true }));
 
 
@@ -24,6 +26,11 @@ app.use("/api/user", require("./routes/userRoutes"))
 app.use("/api/admin", require("./routes/adminRoutes"))
 app.use("/api/orders", require("./routes/orderRoutes"))
 app.use("/api/messages", require("./routes/contactUsRoutes"))
+
+
+app.use("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "dist", "index.html"))
+})
 
 mongoose.connection.once("open", () => {
     console.log("Database Conected");
